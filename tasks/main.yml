@@ -1,0 +1,19 @@
+---
+# tasks file for openstack-vm
+- name: ensure {{ name }} exists in openstack
+  os_server:
+    state: present
+    cloud: "{{ cloud_name }}"
+    name: "{{ name }}"
+    image: "{{ image_id }}"
+    key_name: "{{ os_key_name }}"
+    flavor: "{{ flavor_id}}"
+    nics:
+      - net-name: "{{ nic_name }}"
+    floating_ip_pools: "{{ float_name }}"
+    security_groups: "{{ sec_group }}"
+  register: "out"
+- name: add to hosts
+  add_host: name="{{ name }}" groups="{{ os_group }}" ansible_ssh_host="{{ out.openstack.addresses.private[1].addr }}"
+- debug: msg="{{ out.openstack.addresses.private[1].addr }}"
+- local_action: wait_for port=22 host="{{ out.openstack.addresses.private[1].addr }}" search_regex=OpenSSH delay=10

@@ -1,0 +1,6 @@
+---
+# defaults file for openstack-vm
+flavor_id: m1.small
+nic_name: private
+float_name: public
+sec_group: default
